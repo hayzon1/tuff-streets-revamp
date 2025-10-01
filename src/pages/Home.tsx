@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Instagram } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProductCard from '@/components/ProductCard';
+import TuffLifestyle from '@/components/TuffLifestyle';
 import { products } from '@/data/products';
 
 const Home = () => {
@@ -76,41 +77,8 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Shop The Look */}
-      <section className="section-container bg-muted/30">
-        <h2 className="text-4xl md:text-5xl font-display mb-8 text-center">SHOP THE LOOK</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-          <div className="relative aspect-[3/4] overflow-hidden group cursor-pointer">
-            <img
-              src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&q=80"
-              alt="Curated Look 1"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
-              <div className="text-white">
-                <h3 className="font-display text-2xl mb-2">STREET ESSENTIALS</h3>
-                <p className="text-white/80 mb-4">Hoodie + Cargo + Attitude</p>
-                <Button variant="secondary">Shop This Look</Button>
-              </div>
-            </div>
-          </div>
-          
-          <div className="relative aspect-[3/4] overflow-hidden group cursor-pointer">
-            <img
-              src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=800&q=80"
-              alt="Curated Look 2"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
-              <div className="text-white">
-                <h3 className="font-display text-2xl mb-2">ALTE VIBES</h3>
-                <p className="text-white/80 mb-4">Denim + Graphic Tee + Energy</p>
-                <Button variant="secondary">Shop This Look</Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Tuff Lifestyle Carousel */}
+      <TuffLifestyle />
 
       {/* Trending */}
       <section className="section-container">
