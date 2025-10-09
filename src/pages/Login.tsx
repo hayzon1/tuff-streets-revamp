@@ -1,20 +1,44 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { signIn, user, loading, isAdmin } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    remember: false,
+    rememberMe: false,
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Redirect if already logged in
+  useEffect(() => {
+    if (!loading && user) {
+      if (isAdmin) {
+        navigate('/admin');
+      } else {
+        navigate('/account');
+      }
+    }
+  }, [user, loading, isAdmin, navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success('Logged in successfully!');
-    navigate('/account');
+    setIsSubmitting(true);
+
+    const { error } = await signIn(formData.email, formData.password);
+
+    if (error) {
+      toast.error(error.message || 'Login failed. Please check your credentials.');
+      setIsSubmitting(false);
+      return;
+    }
+
+    toast.success('Login successful!');
+    // Navigation will happen via useEffect
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,8 +94,8 @@ const Login = () => {
             <label className="flex items-center">
               <input
                 type="checkbox"
-                name="remember"
-                checked={formData.remember}
+                name="rememberMe"
+                checked={formData.rememberMe}
                 onChange={handleChange}
                 className="mr-2"
               />
@@ -82,8 +106,8 @@ const Login = () => {
             </Link>
           </div>
 
-          <Button type="submit" size="lg" className="btn-tuff w-full">
-            Login
+          <Button type="submit" size="lg" className="btn-tuff w-full" disabled={isSubmitting}>
+            {isSubmitting ? 'Logging in...' : 'Login'}
           </Button>
 
           <p className="text-center text-sm text-muted-foreground">

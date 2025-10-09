@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Register = () => {
   const navigate = useNavigate();
+  const { signUp, user, loading } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -12,8 +14,16 @@ const Register = () => {
     confirmPassword: '',
     acceptTerms: false,
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Redirect if already logged in
+  useEffect(() => {
+    if (!loading && user) {
+      navigate('/account');
+    }
+  }, [user, loading, navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (formData.password !== formData.confirmPassword) {
@@ -26,8 +36,23 @@ const Register = () => {
       return;
     }
 
-    toast.success('Account created successfully!');
-    navigate('/account');
+    if (formData.password.length < 8) {
+      toast.error('Password must be at least 8 characters');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    const { error } = await signUp(formData.email, formData.password, formData.name);
+
+    if (error) {
+      toast.error(error.message || 'Registration failed. Please try again.');
+      setIsSubmitting(false);
+      return;
+    }
+
+    toast.success('Account created successfully! You can now login.');
+    navigate('/login');
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -125,8 +150,8 @@ const Register = () => {
             </span>
           </label>
 
-          <Button type="submit" size="lg" className="btn-tuff w-full">
-            Create Account
+          <Button type="submit" size="lg" className="btn-tuff w-full" disabled={isSubmitting}>
+            {isSubmitting ? 'Creating Account...' : 'Create Account'}
           </Button>
 
           <p className="text-center text-sm text-muted-foreground">
