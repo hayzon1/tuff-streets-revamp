@@ -7,12 +7,15 @@ import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Plus, Edit, Trash2 } from 'lucide-react';
+import { CouponForm } from '@/components/admin/CouponForm';
 
 const Coupons = () => {
   const { isAdmin, loading } = useAuth();
   const navigate = useNavigate();
   const [coupons, setCoupons] = useState<any[]>([]);
   const [loadingCoupons, setLoadingCoupons] = useState(true);
+  const [formOpen, setFormOpen] = useState(false);
+  const [selectedCoupon, setSelectedCoupon] = useState<any>(null);
 
   useEffect(() => {
     if (!loading && !isAdmin) {
@@ -93,7 +96,7 @@ const Coupons = () => {
             <h1 className="text-4xl font-display mb-2">COUPONS</h1>
             <p className="text-muted-foreground">Manage discount codes and promotions</p>
           </div>
-          <Button className="btn-tuff">
+          <Button className="btn-tuff" onClick={() => { setSelectedCoupon(null); setFormOpen(true); }}>
             <Plus className="h-5 w-5 mr-2" />
             Create Coupon
           </Button>
@@ -150,7 +153,7 @@ const Coupons = () => {
                       </td>
                       <td className="py-4 px-4">
                         <div className="flex gap-2">
-                          <Button size="sm" variant="outline">
+                          <Button size="sm" variant="outline" onClick={() => { setSelectedCoupon(coupon); setFormOpen(true); }}>
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button
@@ -169,6 +172,13 @@ const Coupons = () => {
             </table>
           </div>
         </Card>
+
+        <CouponForm
+          open={formOpen}
+          onOpenChange={setFormOpen}
+          onSuccess={fetchCoupons}
+          coupon={selectedCoupon}
+        />
       </div>
     </AdminLayout>
   );

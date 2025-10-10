@@ -7,12 +7,15 @@ import { Card } from '@/components/ui/card';
 import { Plus, Edit, Trash2, AlertTriangle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { ProductForm } from '@/components/admin/ProductForm';
 
 const Products = () => {
   const { isAdmin, loading } = useAuth();
   const navigate = useNavigate();
   const [products, setProducts] = useState<any[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
+  const [formOpen, setFormOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
   useEffect(() => {
     if (!loading && !isAdmin) {
@@ -77,7 +80,7 @@ const Products = () => {
             <h1 className="text-4xl font-display mb-2">PRODUCTS</h1>
             <p className="text-muted-foreground">Manage your product catalog</p>
           </div>
-          <Button className="btn-tuff">
+          <Button className="btn-tuff" onClick={() => { setSelectedProduct(null); setFormOpen(true); }}>
             <Plus className="h-5 w-5 mr-2" />
             Add Product
           </Button>
@@ -129,7 +132,7 @@ const Products = () => {
                     </td>
                     <td className="py-4 px-4">
                       <div className="flex gap-2">
-                        <Button size="sm" variant="outline">
+                        <Button size="sm" variant="outline" onClick={() => { setSelectedProduct(product); setFormOpen(true); }}>
                           <Edit className="h-4 w-4" />
                         </Button>
                         <Button
@@ -147,6 +150,13 @@ const Products = () => {
             </table>
           </div>
         </Card>
+
+        <ProductForm
+          open={formOpen}
+          onOpenChange={setFormOpen}
+          onSuccess={fetchProducts}
+          product={selectedProduct}
+        />
       </div>
     </AdminLayout>
   );
